@@ -1038,6 +1038,8 @@ class Input {
         this.buttonsup = []
         this.keys = []
         this.buttons = []
+        this.mouseX = 0;
+        this.mouseY = 0;
         let input = this
         document.addEventListener("keydown", function(event) {
             if (event.repeat) return
@@ -1061,6 +1063,10 @@ class Input {
             input.keys = [...new Set(input.keys)]
             input.buttons = [...new Set(input.buttons)]
         })
+        document.addEventListener('mousemove', function(event) {
+            input.mouseX = event.clientX;
+            input.mouseY = event.clientY;
+        });
     }
 
     tick() {
