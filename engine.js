@@ -106,6 +106,14 @@ class Canvas {
         this.canvas.height = val
     }
 
+    get screenWidth() {
+        return window.innerWidth
+    }
+
+    get screenHeight() {
+        return window.innerHeight
+    }
+
     get background() {
         return this.backgroundColor
     }
@@ -149,9 +157,10 @@ function background(color) {
     canvas.context.reset()
 }
 
-function rect(x, y, width, height) {
+function rect(x, y, width, height, mode = 0) {
     canvas.context.beginPath()
-    canvas.context.rect(x - width/2, y - height/2, width, height)
+    if (mode == 0) canvas.context.rect(x - width/2, y - height/2, width, height)
+    if (mode == 1) canvas.context.rect(x, y, width, height)
     if (doFill) {
         canvas.context.fill()
     }
