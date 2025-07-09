@@ -1200,13 +1200,13 @@ class Input {
         })
     }
 
-    saveFile(data) {
+    saveFile(data, name = 'file.txt') {
         let blob = data
         if (typeof blob == 'string') blob = new Blob([blob], {type: 'text/plain'})
         let fileURL = URL.createObjectURL(blob)
         let link = document.createElement('a')
         link.href = fileURL
-        link.download = 'example.txt'
+        link.download = name
         document.body.appendChild(link)
         link.click()
         URL.revokeObjectURL(fileURL)
