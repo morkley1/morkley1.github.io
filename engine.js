@@ -1126,6 +1126,92 @@ class Input {
         let vec = new Vector(input.getAxis(xp, xn), input.getAxis(yp, yn))
         return vec.normalized()
     }
+
+    async readClipboard() {
+        try {
+            let dat = await navigator.clipboard.read()
+            dat = dat[0]
+            if (dat.types.length > 0) {
+                dat = await dat.getType(dat.types[0])
+                dat = await dat.text()
+                return dat
+            }
+            return null
+        } catch (error) {
+            console.error(error.message)
+            return null
+        }
+    }
+
+    async writeClipboard(data) {
+        try {
+            let output = data
+            if (typeof output == 'string') {
+                let type = "text/plain"
+                let clipboardItemData = {
+                    [type]: output,
+                }
+                output = [new ClipboardItem(clipboardItemData)]
+            }
+            await navigator.clipboard.write(output)
+        } catch (error) {
+            console.error(error.message)
+        }
+    }
+
+    loadFile(multi = false) {
+        let inp = document.createElement('input')
+        inp.name = 'load'
+        inp.type = 'file'
+        if (multi) inp.multiple = true
+        document.body.appendChild(inp)
+        inp.click()
+        let out = null
+        inp.addEventListener("change", handleFiles, false);
+        function handleFiles() {
+            if (multi) out = this.files
+            else out = this.files[0]
+            inp.remove()
+        }
+        return new Promise((resolve) => {
+            let checkInterval = setInterval(() => {
+                if (out != null) {
+                    clearInterval(checkInterval);
+                    resolve(out);
+                }
+            }, 1)
+        })
+    }
+
+    readFile(file) {
+        let reader = new FileReader()
+        let out = null
+        reader.onload = () => {
+            out = reader.result
+        }
+        reader.readAsText(file)
+        return new Promise((resolve) => {
+            let checkInterval = setInterval(() => {
+                if (out != null) {
+                    clearInterval(checkInterval);
+                    resolve(out);
+                }
+            }, 1)
+        })
+    }
+
+    saveFile(data) {
+        let blob = data
+        if (typeof blob == 'string') blob = new Blob([blob], {type: 'text/plain'})
+        let fileURL = URL.createObjectURL(blob)
+        let link = document.createElement('a')
+        link.href = fileURL
+        link.download = 'example.txt'
+        document.body.appendChild(link)
+        link.click()
+        URL.revokeObjectURL(fileURL)
+        link.remove()
+    }
 }
 
 /// FUNCTIONS ///
