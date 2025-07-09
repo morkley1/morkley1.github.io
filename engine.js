@@ -1066,7 +1066,21 @@ class Input {
         document.addEventListener('mousemove', function(event) {
             input.mouseX = event.clientX;
             input.mouseY = event.clientY;
-        });
+        })
+        document.addEventListener("mousedown", function(event) {
+            if (event.repeat) return
+            input.buttonsdown.push((['LeftMouseButton', 'MiddleMouseButton', 'RightMouseButton', 'BrowserBack', 'BrowserForward'])[event.button])
+            input.buttons.push((['LeftMouseButton', 'MiddleMouseButton', 'RightMouseButton', 'BrowserBack', 'BrowserForward'])[event.button])
+            input.buttonsdown = [...new Set(input.buttonsdown)]
+            input.buttons = [...new Set(input.buttons)]
+        })
+        document.addEventListener("mouseup", function(event) {
+            if (event.repeat) return
+            input.buttonsup.push((['LeftMouseButton', 'MiddleMouseButton', 'RightMouseButton', 'BrowserBack', 'BrowserForward'])[event.button])
+            input.buttons = input.buttons.filter((v) => v != (['LeftMouseButton', 'MiddleMouseButton', 'RightMouseButton', 'BrowserBack', 'BrowserForward'])[event.button])
+            input.buttonsup = [...new Set(input.buttonsup)]
+            input.buttons = [...new Set(input.buttons)]
+        })
     }
 
     tick() {
