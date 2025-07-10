@@ -165,24 +165,24 @@ function render(arr = data.tree, ind = 1, origin = 0, path = []) {
 function parseTree(arr = [data.tree[0]], origin = data.rootCircle, path = [], stop = []) {
     origin.children.length = 0
     origin.open = origin.open.map(() => true)
-    function handleNode(v, i, p, s) {
+    function handleNode(v, i, o, pos, p, s) {
         if (v[0][0] == 'spread') {
             let num = Number(v[0][1]) || 1
             if (s.includes(num)) return
             if (!data.tree[num]) data.tree[num] = [null, true, null]
             let val = data.tree[num]
             if (val != null && val[0] != null) {
-                handleNode(val, num, [], [...s, num])
+                handleNode(val, num, o, pos, [], [...s, num])
             }
         } else {
-            let circle = new AlchemyCircle(v[0][0], origin, i, ...v[0].slice(1).map((value) => Number(value)))
+            let circle = new AlchemyCircle(v[0][0], o, pos, ...v[0].slice(1).map((value) => Number(value)))
             if (arr[i][2] instanceof Array) {
                 let a = data.tree
                 for (let index of p) {
                     a = a[index][2]
                 }
                 for (let n in a.map((a, b) => b)) {
-                    a[n][1] = origin.open[n]
+                    a[n][1] = o.open[n]
                 }
                 while (circle.openings.length > a[i][2].length) {
                     a[i][2].push([null, true, null])
@@ -196,7 +196,7 @@ function parseTree(arr = [data.tree[0]], origin = data.rootCircle, path = [], st
     }
     arr.forEach((v, i) => {
         if (v != null && v[0] != null) {
-            handleNode(v, i, path, stop)
+            handleNode(v, i, origin, i, path, stop)
         }
     })
 }
