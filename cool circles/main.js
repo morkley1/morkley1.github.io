@@ -97,7 +97,7 @@ async function tick(delta) {
     if (input.isButtonPressed('ArrowLeft') && argumentIndex > 1) argumentIndex--
     if (input.isButtonPressed('ArrowRight')) argumentIndex++
     scroll -= input.wheelDelta * 0.01
-    if (scroll < 1) scroll = 1
+    if (scroll < 0) scroll = 0
     parseTree()
     time += delta
 }
