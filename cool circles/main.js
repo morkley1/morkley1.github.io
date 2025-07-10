@@ -1,6 +1,7 @@
 let selected = 0
 let selectedValue = null
 let scroll = 0
+let scrollDirection = 1
 let argumentIndex = 1
 let time = 0
 
@@ -84,6 +85,9 @@ async function tick(delta) {
         tree = await input.readFile(tree)
         if (tree) data.tree = JSON.parse(tree)
     }, data.panelX + 2 + (data.panelXS / 2), canvas.height - 25, (data.panelXS / 2) - 10, 20)
+    button('scroll direction: ' + (srollDirection == 1 ? 'up' : 'down'), async () => {
+        scrollDirection = -scrollDirection
+    }, data.panelX + 7, canvas.height - 75, (data.panelXS / 2) - 10, 20)
     if (input.isButtonPressed('ArrowUp') && selected > 0) {
         selected--
         while (25 + (selected - Math.floor(scroll)) * 25 > canvas.height / 2) scroll++
@@ -96,7 +100,7 @@ async function tick(delta) {
     }
     if (input.isButtonPressed('ArrowLeft') && argumentIndex > 1) argumentIndex--
     if (input.isButtonPressed('ArrowRight')) argumentIndex++
-    scroll -= input.wheelDelta * 0.01
+    scroll += input.wheelDelta * 0.01 * scrollDirection
     if (scroll < 0) scroll = 0
     parseTree()
     time += delta
