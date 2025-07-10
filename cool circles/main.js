@@ -87,7 +87,7 @@ async function tick(delta) {
     }, data.panelX + 2 + (data.panelXS / 2), canvas.height - 25, (data.panelXS / 2) - 10, 20)
     button('scroll direction: ' + (scrollDirection == 1 ? 'down' : 'up'), async () => {
         scrollDirection = -scrollDirection
-    }, data.panelX + 7, canvas.height - 75, data.panelX + data.panelXS - 8, 20)
+    }, data.panelX + 7, canvas.height - 75, data.panelXS - 15, 20)
     if (input.isButtonPressed('ArrowUp') && selected > 0) {
         selected--
         while (25 + (selected - Math.floor(scroll)) * 25 > canvas.height / 2) scroll++
