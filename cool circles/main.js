@@ -88,6 +88,7 @@ async function tick(delta) {
     if (input.isButtonPressed('ArrowDown')) selected++
     if (input.isButtonPressed('ArrowLeft') && argumentIndex > 1) argumentIndex--
     if (input.isButtonPressed('ArrowRight')) argumentIndex++
+    scroll += input.wheelDelta
     parseTree()
     time += delta
 }
@@ -103,9 +104,9 @@ function render(arr = data.tree, ind = 1, origin = 0, path = []) {
             if (
                 input.mouseX >= data.panelX + ind * 5 &&
                 input.mouseX <= data.panelX + ind * 5 + data.panelXS - (ind + 1) * 5 &&
-                input.mouseY >= 5 + (i + origin - scroll) * 25 &&
-                input.mouseY <= 25 + (i + origin - scroll) * 25 &&
-                25 + (i + origin - scroll) * 25 < canvas.height / 2
+                input.mouseY >= 5 + (i + origin - Math.floor(scroll)) * 25 &&
+                input.mouseY <= 25 + (i + origin - Math.floor(scroll)) * 25 &&
+                25 + (i + origin - Math.floor(scroll)) * 25 < canvas.height / 2
             ) {
                 fill(31)
                 if (input.isButtonPressed('LeftMouseButton')) {
@@ -128,21 +129,21 @@ function render(arr = data.tree, ind = 1, origin = 0, path = []) {
                 if (a[j][0] && !a[j][0][argumentIndex]) a[j][0][argumentIndex] = ''
                 if (a[j][0]) a[j][0][argumentIndex] += input.keysdown.filter((v) => '0123456789.-'.split('').includes(v)).join('')
                 if (a[j][0] && input.isKeyPressed('Backspace')) a[j][0][argumentIndex] = a[j][0][argumentIndex].slice(0, -1)
-                while (25 + (i + origin - scroll) * 25 > canvas.height / 2) scroll++
-                while (5 + (i + origin - scroll) * 25 < 0) scroll--
+                while (25 + (i + origin - Math.floor(scroll)) * 25 > canvas.height / 2) scroll = Math.floor(scroll + 1)
+                while (5 + (i + origin - Math.floor(scroll)) * 25 < 0) scroll = Math.ceil(scroll - 1)
             }
-            if (25 + (i + origin - scroll) * 25 < canvas.height / 2) {
-                rect(data.panelX + ind * 5, 5 + (i + origin - scroll) * 25, data.panelXS - (ind + 1) * 5, 20, 1)
+            if (25 + (i + origin - Math.floor(scroll)) * 25 < canvas.height / 2) {
+                rect(data.panelX + ind * 5, 5 + (i + origin - Math.floor(scroll)) * 25, data.panelXS - (ind + 1) * 5, 20, 1)
                 fill(255)
                 if (v[0]) {
                     while ((v[0].length > 1 && v[0][v[0].length - 1] == '') && !(v[0].length - 1 <= argumentIndex && (i + origin) == selected)) {
                         v[0].pop();
                     }
                     v[0] = Array.from(v[0], item => item === undefined ? '' : item)
-                    text(j + ': ' + v[0].map((a, b) => b == argumentIndex && (i + origin) == selected ? '_' + a + '_' : a).map((a, b) => b != 0 ? b + ': ' + a : a).join(', '), data.panelX + ind * 5 + 2, 18 + (i + origin - scroll) * 25)
+                    text(j + ': ' + v[0].map((a, b) => b == argumentIndex && (i + origin) == selected ? '_' + a + '_' : a).map((a, b) => b != 0 ? b + ': ' + a : a).join(', '), data.panelX + ind * 5 + 2, 18 + (i + origin - Math.floor(scroll)) * 25)
                     i += render(v[2], ind + 1, i + origin + 1, [...path, j])
                 } else {
-                    text(j, data.panelX + ind * 5 + 2, 18 + (i + origin - scroll) * 25)
+                    text(j, data.panelX + ind * 5 + 2, 18 + (i + origin - Math.floor(scroll)) * 25)
                 }
             }
         }
@@ -153,48 +154,39 @@ function render(arr = data.tree, ind = 1, origin = 0, path = []) {
 function parseTree(arr = [data.tree[0]], origin = data.rootCircle, path = [], stop = []) {
     origin.children.length = 0
     origin.open = origin.open.map(() => true)
+    function handleNode(v, i) {
+        if (v[0][0] == 'spread') {
+            let num = Number(v[0][1]) || 1
+            if (stop.includes(num)) return
+            if (!data.tree[num]) data.tree[num] = [null, true, null]
+            let val = data.tree[num]
+            if (val != null && val[0] != null) {
+                handleNode(val, num)
+                parseTree(val[2], circle, [num], [...stop, num])
+            }
+        } else {
+            let circle = new AlchemyCircle(v[0][0], origin, i, ...v[0].slice(1).map((value) => Number(value)))
+            if (arr[i][2] instanceof Array) {
+                let a = data.tree
+                for (let index of path) {
+                    a = a[index][2]
+                }
+                for (let n in a.map((a, b) => b)) {
+                    a[n][1] = origin.open[n]
+                }
+                while (circle.openings.length > a[i][2].length) {
+                    a[i][2].push([null, true, null])
+                }
+                while (circle.openings.length < a[i][2].length) {
+                    a[i][2].pop()
+                }
+            }
+            parseTree(v[2], circle, [...path, i], stop)
+        }
+    }
     arr.forEach((v, i) => {
         if (v != null && v[0] != null) {
-            if (v[0][0] == 'spread') {
-                let num = Number(v[0][1]) || 1
-                if (stop.includes(num)) return
-                if (!data.tree[num]) data.tree[num] = [null, true, null]
-                let val = data.tree[num]
-                if (val != null && val[0] != null) {
-                    let circle = new AlchemyCircle(val[0][0], origin, i, ...val[0].slice(1))
-                    let a = data.tree
-                    if (a[num][2] instanceof Array) {
-                        for (let n in a.map((a, b) => b)) {
-                            a[n][1] = origin.open[n]
-                        }
-                        while (circle.openings.length > a[num][2].length) {
-                            a[num][2].push([null, true, null])
-                        }
-                        while (circle.openings.length < a[num][2].length) {
-                            a[num][2].pop()
-                        }
-                    }
-                    parseTree(val[2], circle, [num], [...stop, num])
-                }
-            } else {
-                let circle = new AlchemyCircle(v[0][0], origin, i, ...v[0].slice(1).map((value) => Number(value)))
-                if (arr[i][2] instanceof Array) {
-                    let a = data.tree
-                    for (let index of path) {
-                        a = a[index][2]
-                    }
-                    for (let n in a.map((a, b) => b)) {
-                        a[n][1] = origin.open[n]
-                    }
-                    while (circle.openings.length > a[i][2].length) {
-                        a[i][2].push([null, true, null])
-                    }
-                    while (circle.openings.length < a[i][2].length) {
-                        a[i][2].pop()
-                    }
-                }
-                parseTree(v[2], circle, [...path, i], stop)
-            }
+            handleNode(v, i)
         }
     })
 }
