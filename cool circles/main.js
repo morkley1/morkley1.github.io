@@ -164,7 +164,7 @@ function parseTree(arr = [data.tree[0]], origin = data.rootCircle, path = [], st
                     let circle = new AlchemyCircle(val[0][0], origin, i, ...val[0].slice(1))
                     let a = data.tree
                     if (a[num][2] instanceof Array) {
-                        for (let n = 0; n < a.length; n++) {
+                        for (let n in a.map((a, b) => b)) {
                             a[n][1] = origin.open[n]
                         }
                         while (circle.openings.length > a[num][2].length) {
@@ -183,7 +183,7 @@ function parseTree(arr = [data.tree[0]], origin = data.rootCircle, path = [], st
                     for (let index of path) {
                         a = a[index][2]
                     }
-                    for (let n = 0; n < a.length; n++) {
+                    for (let n in a.map((a, b) => b)) {
                         a[n][1] = origin.open[n]
                     }
                     while (circle.openings.length > a[i][2].length) {
