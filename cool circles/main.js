@@ -88,7 +88,8 @@ async function tick(delta) {
     if (input.isButtonPressed('ArrowDown')) selected++
     if (input.isButtonPressed('ArrowLeft') && argumentIndex > 1) argumentIndex--
     if (input.isButtonPressed('ArrowRight')) argumentIndex++
-    scroll += input.wheelDelta
+    scroll -= input.wheelDelta * 0.01
+    if (scroll < 0) scroll = 0
     parseTree()
     time += delta
 }
@@ -129,8 +130,8 @@ function render(arr = data.tree, ind = 1, origin = 0, path = []) {
                 if (a[j][0] && !a[j][0][argumentIndex]) a[j][0][argumentIndex] = ''
                 if (a[j][0]) a[j][0][argumentIndex] += input.keysdown.filter((v) => '0123456789.-'.split('').includes(v)).join('')
                 if (a[j][0] && input.isKeyPressed('Backspace')) a[j][0][argumentIndex] = a[j][0][argumentIndex].slice(0, -1)
-                while (25 + (i + origin - Math.floor(scroll)) * 25 > canvas.height / 2) scroll = Math.floor(scroll + 1)
-                while (5 + (i + origin - Math.floor(scroll)) * 25 < 0) scroll = Math.ceil(scroll - 1)
+                while (25 + (i + origin - Math.floor(scroll)) * 25 > canvas.height / 2) scroll++
+                while (5 + (i + origin - Math.floor(scroll)) * 25 < 0) scroll--
             }
             if (25 + (i + origin - Math.floor(scroll)) * 25 < canvas.height / 2) {
                 rect(data.panelX + ind * 5, 5 + (i + origin - Math.floor(scroll)) * 25, data.panelXS - (ind + 1) * 5, 20, 1)
