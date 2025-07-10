@@ -1040,8 +1040,9 @@ class Input {
         this.buttonsup = []
         this.keys = []
         this.buttons = []
-        this.mouseX = 0;
-        this.mouseY = 0;
+        this.mouseX = 0
+        this.mouseY = 0
+        this.wheelDelta = 0
         let input = this
         document.addEventListener("keydown", function(event) {
             if (event.repeat) return
@@ -1082,6 +1083,9 @@ class Input {
             input.buttons = input.buttons.filter((v) => v != (['LeftMouseButton', 'MiddleMouseButton', 'RightMouseButton', 'BrowserBack', 'BrowserForward'])[event.button])
             input.buttonsup = [...new Set(input.buttonsup)]
             input.buttons = [...new Set(input.buttons)]
+        })
+        document.addEventListener("wheel", function(event) {
+            input.wheelDelta = event.deltaY
         })
     }
 
