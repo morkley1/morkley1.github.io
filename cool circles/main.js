@@ -165,14 +165,14 @@ function render(arr = data.tree, ind = 1, origin = 0, path = []) {
 function parseTree(arr = [data.tree[0]], origin = data.rootCircle, path = [], stop = []) {
     origin.children.length = 0
     origin.open = origin.open.map(() => true)
-    function handleNode(v, i) {
+    function handleNode(v, i, path, stop) {
         if (v[0][0] == 'spread') {
             let num = Number(v[0][1]) || 1
             if (stop.includes(num)) return
             if (!data.tree[num]) data.tree[num] = [null, true, null]
             let val = data.tree[num]
             if (val != null && val[0] != null) {
-                handleNode(val, num)
+                handleNode(val, num, [], [...stop, num])
             }
         } else {
             let circle = new AlchemyCircle(v[0][0], origin, i, ...v[0].slice(1).map((value) => Number(value)))
@@ -196,7 +196,7 @@ function parseTree(arr = [data.tree[0]], origin = data.rootCircle, path = [], st
     }
     arr.forEach((v, i) => {
         if (v != null && v[0] != null) {
-            handleNode(v, i)
+            handleNode(v, i, path, stop)
         }
     })
 }
