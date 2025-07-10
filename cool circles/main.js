@@ -162,7 +162,6 @@ function parseTree(arr = [data.tree[0]], origin = data.rootCircle, path = [], st
             let val = data.tree[num]
             if (val != null && val[0] != null) {
                 handleNode(val, num)
-                parseTree(val[2], circle, [num], [...stop, num])
             }
         } else {
             let circle = new AlchemyCircle(v[0][0], origin, i, ...v[0].slice(1).map((value) => Number(value)))
