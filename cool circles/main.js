@@ -85,7 +85,7 @@ async function tick(delta) {
         tree = await input.readFile(tree)
         if (tree) data.tree = JSON.parse(tree)
     }, data.panelX + 2 + (data.panelXS / 2), canvas.height - 25, (data.panelXS / 2) - 10, 20)
-    button('scroll direction: ' + (srollDirection == 1 ? 'up' : 'down'), async () => {
+    button('scroll direction: ' + (scrollDirection == 1 ? 'up' : 'down'), async () => {
         scrollDirection = -scrollDirection
     }, data.panelX + 7, canvas.height - 75, (data.panelXS / 2) - 10, 20)
     if (input.isButtonPressed('ArrowUp') && selected > 0) {
