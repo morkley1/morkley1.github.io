@@ -1094,6 +1094,7 @@ class Input {
         this.buttonsdown = []
         this.keysup = []
         this.buttonsup = []
+        this.wheelDelta = 0
     }
 
     isKeyDown(key) {
