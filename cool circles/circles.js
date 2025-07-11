@@ -124,7 +124,7 @@ const TYPES = {
             return [{
                 'size': size,
                 'position': new Vector(0, 0),
-                'rotation': self.n,
+                'rotation': self.n / 180 * PI,
                 'ocu': [0]
             }]
         }
