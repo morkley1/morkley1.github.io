@@ -40,14 +40,14 @@ async function tick(delta) {
     rect(data.panelX, canvas.height / 2, data.panelXS, canvas.height / 2, 1)
     render()
     let options = [
-        'circle',
-        'ngon',
-        'ncircles',
-        'spread',
-        'scale',
-        'rotate',
-        'spin',
-        'none'
+        ['circle', ''],
+        ['ngon', '(1: vertex count, 2: connection length)'],
+        ['ncircles', '(1: circle count)'],
+        ['spread', '(1: id)'],
+        ['scale', '(1: scaling ratio)'],
+        ['rotate', '(1: angle)'],
+        ['spin', '(1: angle per second)'],
+        ['none', '']
     ]
     options.forEach((v, i) => {
         doFill = true
@@ -61,13 +61,13 @@ async function tick(delta) {
         ) {
             fill(31)
             if (input.isButtonPressed('LeftMouseButton')) {
-                selectedValue = [v]
+                selectedValue = [v[0]]
             }
         }
         rect(data.panelX + 5, 5 + i * 25 + canvas.height / 2, data.panelXS - 10, 20, 1)
-        if (v) {
+        if (v[0]) {
             fill(255)
-            text(v, data.panelX + 7, 18 + i * 25 + canvas.height / 2)
+            text(v[0] + ' ' + v[1], data.panelX + 7, 18 + i * 25 + canvas.height / 2)
         }
     })
     button('copy', () => {
