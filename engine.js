@@ -1243,12 +1243,12 @@ function _tick() {
     let time = Date.now()
     let deltaTime = (time - prevTime) / 1000
 
-    let responce
+    let responce = 0
     if (typeof tick === 'function') {
         responce = tick(deltaTime)
     }
 
-    if (!responce == CANCEL) {
+    if (responce != CANCEL) {
         entities = entities.sort((child) => child.zIndex)
         for (let entity in entities) {
             entities[entity].draw()
