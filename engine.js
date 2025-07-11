@@ -8,6 +8,7 @@ const data = {
 }
 const transforms = []
 const PI = Math.PI
+const CANCEL = 13
 
 
 
@@ -1242,13 +1243,16 @@ function _tick() {
     let time = Date.now()
     let deltaTime = (time - prevTime) / 1000
 
+    let responce
     if (typeof tick === 'function') {
-        tick(deltaTime)
+        responce = tick(deltaTime)
     }
 
-    entities = entities.sort((child) => child.zIndex)
-    for (let entity in entities) {
-        entities[entity].draw()
+    if (!responce == CANCEL) {
+        entities = entities.sort((child) => child.zIndex)
+        for (let entity in entities) {
+            entities[entity].draw()
+        }
     }
 
     physicsServer.tick(deltaTime)
